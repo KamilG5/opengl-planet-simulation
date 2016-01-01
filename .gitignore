@@ -1,0 +1,66 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.LIB
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+
+# Big input files
+*.test
+
+# Valgrind output
+callgrind.out.*
+
+#logs
+*.log
+*.tlog
+*.lastbuildstate
+
+#Debug
+*.pdb
+*.idb
+*.ilk
+Debug/
+
+
+#Backup
+*.sln
+Backup/
+
+gl/
+
+#VS
+*.sdf
+*.sln
+*.suo
+*.opendb
+*.vcproj
+*.vcxproj*
+*.htm
