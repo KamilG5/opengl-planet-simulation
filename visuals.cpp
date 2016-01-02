@@ -67,9 +67,9 @@ void Render()
   
  
   //(01)             
-// DisplayModel(md);
 	DisplayStars();
 	DisplaySun();
+	DisplayModel(md);
 
   //(02)
   //glColor3f(0.8, 0.1, 0.1);
@@ -402,8 +402,9 @@ void ReadFile(model *md)
 void DisplayModel(model md){
 	glColor3f(0.3, 0.2, 0.9);                            // Set drawing colour
 
-	glTranslatef(0,0,-200);
 	glPushMatrix();
+	glScalef(0.04f, 0.04f, 1);
+	glTranslatef(-10,-10,-750);
 	glBegin(GL_TRIANGLES);
 
 	for (int i = 0; i < md.vertexIndices.size(); i++)
