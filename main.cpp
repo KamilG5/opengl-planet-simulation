@@ -14,8 +14,7 @@
 #ifdef __linux__ 
 #include <GL/glut.h>
 #elif _WIN32
-#include "gl/glut.h"   // - An interface and windows 
-                         management library
+#include "gl/glut.h"   // - An interface and windows management library
 #endif
 #include <time.h>
 
