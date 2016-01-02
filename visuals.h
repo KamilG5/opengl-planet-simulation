@@ -63,3 +63,4 @@ void Mouse(int button,int state,int x,int y);
 void MenuSelect(int choice);
 void DisplaySun();
 void DisplayStars();
+void displayPlanet(model, double, double, double, float);

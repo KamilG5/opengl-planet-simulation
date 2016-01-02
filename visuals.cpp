@@ -27,10 +27,12 @@ static bool star_up = true;
 
 static double sun_radius = RADIUS_INIT;
 
-#define STARS_NUM 50
+#define STARS_NUM 75
 #define STARS_INIT 1.5
 #define STARS_THRESHOLD 2
 #define STARS_STEP 0.005
+
+
 
 static double star_radius = STARS_INIT;
 
@@ -176,8 +178,8 @@ void Setup()  // TOUCH IT !!
 	for (int i = 0; i < STARS_NUM; i++) {
 		stars_radius[i] = stars_radius_init[i] = rand() / (((double)RAND_MAX*20.0)) + 0.01;
 
-		stars_positions[i][0] = (rand() % 10000) / 1000.0;
-		stars_positions[i][1] = (rand() % 10000) /  1000.0;
+		stars_positions[i][0] = (rand() % 10000) / 600.0;
+		stars_positions[i][1] = (rand() % 10000) /  600.0;
 
 
 
@@ -201,8 +203,8 @@ void Setup()  // TOUCH IT !!
 
 
 	// polygon rendering mode
-	//glEnable(GL_COLOR_MATERIAL);
-	//glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 	//
 	////Set up light source
 	//GLfloat light_position[] = { 0, 0.0, 0.0, 1.0 };
@@ -223,7 +225,8 @@ void Setup()  // TOUCH IT !!
 
 
 
-
+	//No idea why
+	glEnable(GL_NORMALIZE);
 
 
 
@@ -231,9 +234,9 @@ void Setup()  // TOUCH IT !!
 	//Parameter handling
 	glShadeModel (GL_SMOOTH);
 	
-	//glEnable(GL_DEPTH_TEST);
+	// glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);  //renders a fragment if its z value is less or equal of the stored value
-	//glClearDepth(1);
+	// glClearDepth(1);
     
 	// polygon rendering mode
 	glEnable(GL_COLOR_MATERIAL);
@@ -242,7 +245,7 @@ void Setup()  // TOUCH IT !!
 	glColorMaterial( GL_FRONT, GL_AMBIENT_AND_DIFFUSE );
   
 	//Set up light source
-	GLfloat light_position[] = { 0.0, 0.0, -5.0, 0.0 };
+	GLfloat light_position[] = { 0.0, 0.0, -1000.0, 0.0 };
 	glLightfv( GL_LIGHT0, GL_POSITION, light_position);
 
 	GLfloat ambientLight[] = { 0.3, 0.3, 0.3, 1.0 };
@@ -272,13 +275,13 @@ void Setup()  // TOUCH IT !!
 	//glEnable(GL_LIGHTING);
 	//glEnable(GL_LIGHT1);
 	//
-	//glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+	// glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 	
-	//glEnable(GL_CULL_FACE);
-	//glFrontFace(GL_CW);
+	// glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
 
 	//01
-	//glFrontFace(GL_CCW);
+	// glFrontFace(GL_CCW);
  
 
 	// Black background
@@ -400,11 +403,29 @@ void ReadFile(model *md)
 }
 
 void DisplayModel(model md){
-	glColor3f(0.3, 0.2, 0.9);                            // Set drawing colour
 
+	glColor3f(0.046, 0.897, 0.247);                            // Set drawing colour
+	displayPlanet(md, 10, 200, -700, 0.15);
+
+	glColor3f(0.945, 0.081, 0.12);                            // Set drawing colour
+	displayPlanet(md, 10, -200, -700, 0.20);
+
+	glColor3f(0.53, 0.27, 0.94);                            // Set drawing colour
+	displayPlanet(md, -250, -40, -680, 0.18);
+
+	glColor3f(0.3, 0.2, 0.9);                            // Set drawing colour
+	displayPlanet(md, 200, -50, -660, 0.11);
+
+
+	
+	
+}
+
+void displayPlanet(model md, double x, double y, double z, float size){
 	glPushMatrix();
-	glScalef(0.04f, 0.04f, 1);
-	glTranslatef(-10,-10,-750);
+	glTranslatef(x,y,z);
+	glScalef(SCALING_FACTOR, SCALING_FACTOR, SCALING_FACTOR);
+	glTranslatef(-x,-y,-z);
 	glBegin(GL_TRIANGLES);
 
 	for (int i = 0; i < md.vertexIndices.size(); i++)
@@ -416,5 +437,4 @@ void DisplayModel(model md){
 	
 	glEnd();
 	glPopMatrix();
-	
 }
