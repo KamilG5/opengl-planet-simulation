@@ -29,13 +29,14 @@ static double sun_radius = RADIUS_INIT;
 
 #define STARS_NUM 50
 #define STARS_INIT 1.5
-#define STARS_THRESHOLD 1.5
-#define STARS_STEP 0.01
+#define STARS_THRESHOLD 2
+#define STARS_STEP 0.005
 
 static double star_radius = STARS_INIT;
 
 double stars_positions[STARS_NUM][2];
 double stars_radius[STARS_NUM];
+double stars_radius_init[STARS_NUM];
 
 using namespace std;
 
@@ -104,24 +105,26 @@ void Resize(int w, int h)
 void Idle()
 {
 
-	if ((star_radius < STARS_INIT + STARS_THRESHOLD) && star_up) {
-		star_radius += STARS_STEP;
-	}
-	else if ((star_radius > STARS_INIT) && !star_up) {
-		star_radius -= STARS_STEP;
+	for (int i = 0; i < STARS_NUM ; i++) {
+
+		if ((stars_radius[i] < stars_radius_init[i] + STARS_THRESHOLD * stars_radius_init[i]) && star_up) {
+			stars_radius[i] += STARS_STEP;
+		}
+		else if ((stars_radius[i] > stars_radius_init[i]) && !star_up) {
+			stars_radius[i] -= STARS_STEP;
+
+		}
+		else if (stars_radius[i] >= stars_radius_init[i] + STARS_THRESHOLD*stars_radius_init[i] && star_up) {
+			star_up = false;
+			stars_radius[i] -= STARS_STEP;
+
+		}
+		else if (stars_radius[i] <= stars_radius_init[i] && !star_up) {
+			star_up = true;
+			stars_radius[i] += STARS_STEP;
+		}
 
 	}
-	else if (star_radius >= STARS_INIT + STARS_THRESHOLD && star_up) {
-		star_up = false;
-		star_radius -= STARS_STEP;
-
-	}
-	else if (star_radius <= STARS_INIT && !star_up) {
-		star_up = true;
-		star_radius += STARS_STEP;
-	}
-	
-	
 
 	if ( (sun_radius < RADIUS_INIT + RADIUS_THRESHOLD) && up) {
 		sun_radius += RADIUS_STEP;
@@ -171,8 +174,7 @@ void Mouse(int button,int state,int x,int y)
 void Setup()  // TOUCH IT !! 
 { 
 	for (int i = 0; i < STARS_NUM; i++) {
-		stars_radius[i] = rand() / (((double)RAND_MAX)*15.0) + 0.01;
-		cout << stars_radius[i] << endl;
+		stars_radius[i] = stars_radius_init[i] = rand() / (((double)RAND_MAX*20.0)) + 0.01;
 
 		stars_positions[i][0] = (rand() % 10000) / 1000.0;
 		stars_positions[i][1] = (rand() % 10000) /  1000.0;
@@ -289,7 +291,6 @@ void DisplaySun() {
 		glTranslatef(0, 0, -10);
 		double opacity = (RADIUS_INIT + RADIUS_THRESHOLD - sun_radius) / RADIUS_THRESHOLD + 0.35;
 		glColor4f(0.3, 0.33, 0.0, opacity);							   // Radiation
-		cout <<"sun_radius: " <<sun_radius << " op: " << opacity << endl;
 		glutSolidSphere(sun_radius, 200, 20);
 
 		glColor3f(1, 0.91, 0.0);							   // Sun
@@ -311,12 +312,14 @@ void DisplayStars() {
 		glPushMatrix();
 
 		glTranslatef(stars_positions[i][0], stars_positions[i][1], -20);
-		double opacity = (STARS_INIT + STARS_THRESHOLD - star_radius) / STARS_THRESHOLD + 0.35;
-		glColor4f(1, 1, 1, opacity);							   // Set drawing colour = orange
-		glutSolidSphere(star_radius/ 100, 200, 20);
+		double opacity = (stars_radius_init[i] + STARS_THRESHOLD - stars_radius[i]) / STARS_THRESHOLD;
+
+		//cout << i << ": opacity (" <<opacity << ") star_radius (" <<stars_radius[i] <<")"<<"star_radius_init("<<stars_radius_init[i]<<")"<< endl;
+		glColor4f(0.5, 0.5, 0.5, opacity);							   // Set drawing colour = orange
+		glutSolidSphere(stars_radius[i], 200, 20);
 
 		glColor3f(1, 1, 1);							   // Set drawing colour = orange
-		glutSolidSphere(stars_radius[i], 200, 20);
+		glutSolidSphere(stars_radius_init[i], 200, 20);
 
 		glPopMatrix();
 
