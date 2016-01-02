@@ -27,6 +27,7 @@ static bool star_up = true;
 
 static double sun_radius = RADIUS_INIT;
 
+
 #define STARS_NUM 75
 #define STARS_INIT 1.5
 #define STARS_THRESHOLD 2
@@ -106,7 +107,7 @@ void Resize(int w, int h)
 
 void Idle()
 {
-
+	rotx += 0.01;
 	for (int i = 0; i < STARS_NUM ; i++) {
 
 		if ((stars_radius[i] < stars_radius_init[i] + STARS_THRESHOLD * stars_radius_init[i]) && star_up) {
@@ -408,13 +409,13 @@ void DisplayModel(model md){
 	displayPlanet(md, 10, 200, -700, 0.15);
 
 	glColor3f(0.945, 0.081, 0.12);                            // Set drawing colour
-	displayPlanet(md, 10, -200, -700, 0.20);
+	displayPlanet(md, 10, -200, -750, 0.20);
 
 	glColor3f(0.53, 0.27, 0.94);                            // Set drawing colour
 	displayPlanet(md, -250, -40, -680, 0.18);
 
 	glColor3f(0.3, 0.2, 0.9);                            // Set drawing colour
-	displayPlanet(md, 200, -50, -660, 0.11);
+	displayPlanet(md, 200, -50, -660, 0.15);
 
 
 	
@@ -424,7 +425,8 @@ void DisplayModel(model md){
 void displayPlanet(model md, double x, double y, double z, float size){
 	glPushMatrix();
 	glTranslatef(x,y,z);
-	glScalef(SCALING_FACTOR, SCALING_FACTOR, SCALING_FACTOR);
+	// glRotatef(rotx, 1, 0, 0);
+	glScalef(size, size, size);
 	glTranslatef(-x,-y,-z);
 	glBegin(GL_TRIANGLES);
 
