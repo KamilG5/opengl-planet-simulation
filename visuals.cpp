@@ -435,6 +435,10 @@ void displayPlanet(model md, double x, double y, double z, float size){
 		glVertex3f(md.obj_points[md.vertexIndices[i].vtx[0]-1].x,md.obj_points[md.vertexIndices[i].vtx[0]-1].y,md.obj_points[md.vertexIndices[i].vtx[0]-1].z);
 		glVertex3f(md.obj_points[md.vertexIndices[i].vtx[1]-1].x,md.obj_points[md.vertexIndices[i].vtx[1]-1].y,md.obj_points[md.vertexIndices[i].vtx[1]-1].z);
 		glVertex3f(md.obj_points[md.vertexIndices[i].vtx[2]-1].x,md.obj_points[md.vertexIndices[i].vtx[2]-1].y,md.obj_points[md.vertexIndices[i].vtx[2]-1].z);
+
+		// glNormal3f(md.obj_points[md.normalIndices[i].vtx[0]-1].x,md.obj_points[md.normalIndices[i].vtx[0]-1].y,md.obj_points[md.normalIndices[i].vtx[0]-1].z);
+		// glNormal3f(md.obj_points[md.normalIndices[i].vtx[1]-1].x,md.obj_points[md.normalIndices[i].vtx[1]-1].y,md.obj_points[md.normalIndices[i].vtx[1]-1].z);
+		// glNormal3f(md.obj_points[md.normalIndices[i].vtx[2]-1].x,md.obj_points[md.normalIndices[i].vtx[2]-1].y,md.obj_points[md.normalIndices[i].vtx[2]-1].z);
 	}
 	
 	glEnd();
