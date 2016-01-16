@@ -13,7 +13,7 @@
 model md;
 static float tx = 0.0;
 static float rotx = 0.0;
-static bool animate = false;
+static bool animate = true;
 static float red = 1.0;
 static float green = 0.0;
 static float blue = 0.0;
@@ -21,14 +21,14 @@ static float blue = 0.0;
 
 static bool up = true;
 static bool star_up = true;
-#define RADIUS_INIT 1.4
-#define RADIUS_THRESHOLD 0.2
+#define RADIUS_INIT 1.6
+#define RADIUS_THRESHOLD 0.24
 #define RADIUS_STEP 0.01
 
 static double sun_radius = RADIUS_INIT;
 
 
-#define STARS_NUM 75
+#define STARS_NUM 100
 #define STARS_INIT 1.5
 #define STARS_THRESHOLD 2
 #define STARS_STEP 0.005
@@ -37,7 +37,7 @@ static double sun_radius = RADIUS_INIT;
 
 static double star_radius = STARS_INIT;
 
-double stars_positions[STARS_NUM][2];
+double stars_positions[STARS_NUM][3];
 double stars_radius[STARS_NUM];
 double stars_radius_init[STARS_NUM];
 
@@ -65,14 +65,14 @@ void Render()
 
   //glTranslatef(0,0,-100);
   //glTranslatef(tx,0.0,0.0);
-  //glRotatef(rotx,1,0,0);
 
   
  
   //(01)             
 	DisplayStars();
-	DisplaySun();
+  	// glRotatef(rotx,0,1,0);
 	DisplayModel(md);
+	DisplaySun();
 
   //(02)
   //glColor3f(0.8, 0.1, 0.1);
@@ -107,7 +107,6 @@ void Resize(int w, int h)
 
 void Idle()
 {
-	rotx += 0.01;
 	for (int i = 0; i < STARS_NUM ; i++) {
 
 		if ((stars_radius[i] < stars_radius_init[i] + STARS_THRESHOLD * stars_radius_init[i]) && star_up) {
@@ -144,8 +143,14 @@ void Idle()
 		up = true;
 		sun_radius += RADIUS_STEP;
 	}
+
+	if(animate)
+		rotx += 3.4;
+
 	glutPostRedisplay();
 }
+
+
 
 void Keyboard(unsigned char key,int x,int y)
 {
@@ -180,8 +185,11 @@ void Setup()  // TOUCH IT !!
 		stars_radius[i] = stars_radius_init[i] = rand() / (((double)RAND_MAX*20.0)) + 0.01;
 
 		stars_positions[i][0] = (rand() % 10000) / 600.0;
-		stars_positions[i][1] = (rand() % 10000) /  600.0;
+		stars_positions[i][1] = (rand() % 10000) / 600.0;
+		stars_positions[i][2] = (rand() % 100);
 
+		if((rand() % 2) == 0) 
+			stars_positions[i][2] *= -1;
 
 
 		if (i % 4 == 0) {
@@ -235,9 +243,9 @@ void Setup()  // TOUCH IT !!
 	//Parameter handling
 	glShadeModel (GL_SMOOTH);
 	
-	// glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);  //renders a fragment if its z value is less or equal of the stored value
-	// glClearDepth(1);
+	glClearDepth(1);
     
 	// polygon rendering mode
 	glEnable(GL_COLOR_MATERIAL);
@@ -246,7 +254,7 @@ void Setup()  // TOUCH IT !!
 	glColorMaterial( GL_FRONT, GL_AMBIENT_AND_DIFFUSE );
   
 	//Set up light source
-	GLfloat light_position[] = { 0.0, 0.0, -1000.0, 0.0 };
+	GLfloat light_position[] = { 0.0, 0.0, 30.0, 0.0 };
 	glLightfv( GL_LIGHT0, GL_POSITION, light_position);
 
 	GLfloat ambientLight[] = { 0.3, 0.3, 0.3, 1.0 };
@@ -278,11 +286,11 @@ void Setup()  // TOUCH IT !!
 	//
 	// glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 	
-	// glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 
 	//01
-	// glFrontFace(GL_CCW);
+ 	//glFrontFace(GL_CCW);
  
 
 	// Black background
@@ -293,19 +301,14 @@ void Setup()  // TOUCH IT !!
 void DisplaySun() {
 	glPushMatrix();
 		glTranslatef(0, 0, -10);
-		double opacity = (RADIUS_INIT + RADIUS_THRESHOLD - sun_radius) / RADIUS_THRESHOLD + 0.35;
-		glColor4f(0.3, 0.33, 0.0, opacity);							   // Radiation
-		glutSolidSphere(sun_radius, 200, 20);
 
 		glColor3f(1, 0.91, 0.0);							   // Sun
 		glutSolidSphere(RADIUS_INIT, 200, 20);
-		
-	
-		
-		
-		glPopMatrix();
-	
 
+		double opacity = (RADIUS_INIT + RADIUS_THRESHOLD - sun_radius) / RADIUS_THRESHOLD + 0.35;
+		glColor4f(1, 0.91, 0.0, opacity);							   // Radiation
+		glutSolidSphere(sun_radius, 200, 20);
+	glPopMatrix();
 	
 }
 
@@ -314,18 +317,30 @@ void DisplayStars() {
 	//double star_radius =0.5;
 	for (int i = 0; i < STARS_NUM; i++) {
 		glPushMatrix();
+			glTranslatef(stars_positions[i][0], stars_positions[i][1], stars_positions[i][2]);
 
-		glTranslatef(stars_positions[i][0], stars_positions[i][1], -20);
-		double opacity = (stars_radius_init[i] + STARS_THRESHOLD - stars_radius[i]) / STARS_THRESHOLD;
+			glColor3f(1, 1, 1);							   
+			glutSolidSphere(stars_radius_init[i], 200, 20);
 
-		//cout << i << ": opacity (" <<opacity << ") star_radius (" <<stars_radius[i] <<")"<<"star_radius_init("<<stars_radius_init[i]<<")"<< endl;
-		glColor4f(0.5, 0.5, 0.5, opacity);							   // Set drawing colour = orange
-		glutSolidSphere(stars_radius[i], 200, 20);
-
-		glColor3f(1, 1, 1);							   // Set drawing colour = orange
-		glutSolidSphere(stars_radius_init[i], 200, 20);
+			double opacity = (stars_radius_init[i] + STARS_THRESHOLD - stars_radius[i]) / STARS_THRESHOLD;
+			glColor4f(0.5, 0.5, 0.5, opacity);							   
+			glutSolidSphere(stars_radius[i], 200, 20);
 
 		glPopMatrix();
+
+// glPushMatrix();
+// 		glTranslatef(0, 0, -10);
+// 		glColor3f(1, 0.91, 0.0);							   // Sun
+// 		glutSolidSphere(RADIUS_INIT, 200, 20);
+// 	glPopMatrix();
+
+// 	glPushMatrix();
+// 		glTranslatef(0, 0, -11);
+// 		double opacity = (RADIUS_INIT + RADIUS_THRESHOLD - sun_radius) / RADIUS_THRESHOLD + 0.35;
+// 		glColor4f(0.3, 0.33, 0.0, opacity);							   // Radiation
+// 		glutSolidSphere(sun_radius, 200, 20);
+// 	glPopMatrix();
+	
 
 	}
 
@@ -405,17 +420,17 @@ void ReadFile(model *md)
 
 void DisplayModel(model md){
 
-	glColor3f(0.046, 0.897, 0.247);                            // Set drawing colour
-	displayPlanet(md, 10, 200, -700, 0.15);
+	// glColor3f(0.046, 0.897, 0.247);                            // Set drawing colour
+	// displayPlanet(md, 10, 200, -700, 0.15);
 
-	glColor3f(0.945, 0.081, 0.12);                            // Set drawing colour
-	displayPlanet(md, 10, -200, -750, 0.20);
+	// glColor3f(0.945, 0.081, 0.12);                            // Set drawing colour
+	// displayPlanet(md, 10, -200, -750, 0.20);
 
-	glColor3f(0.53, 0.27, 0.94);                            // Set drawing colour
-	displayPlanet(md, -250, -40, -680, 0.18);
+	// glColor3f(0.53, 0.27, 0.94);                            // Set drawing colour
+	// displayPlanet(md, -250, -40, -680, 0.18);
 
 	glColor3f(0.3, 0.2, 0.9);                            // Set drawing colour
-	displayPlanet(md, 200, -50, -660, 0.15);
+	displayPlanet(md, 0, 0, -13, 0.0005);
 
 
 	
@@ -425,7 +440,11 @@ void DisplayModel(model md){
 void displayPlanet(model md, double x, double y, double z, float size){
 	glPushMatrix();
 	glTranslatef(x,y,z);
-	// glRotatef(rotx, 1, 0, 0);
+		glTranslatef(0, 0, -5); 
+		glRotatef(rotx, 0, 1, 0);
+		glTranslatef(0, 0, 10);
+
+  	// glRotatef(rotx,0,1,0);
 	glScalef(size, size, size);
 	glTranslatef(-x,-y,-z);
 	glBegin(GL_TRIANGLES);
@@ -436,9 +455,9 @@ void displayPlanet(model md, double x, double y, double z, float size){
 		glVertex3f(md.obj_points[md.vertexIndices[i].vtx[1]-1].x,md.obj_points[md.vertexIndices[i].vtx[1]-1].y,md.obj_points[md.vertexIndices[i].vtx[1]-1].z);
 		glVertex3f(md.obj_points[md.vertexIndices[i].vtx[2]-1].x,md.obj_points[md.vertexIndices[i].vtx[2]-1].y,md.obj_points[md.vertexIndices[i].vtx[2]-1].z);
 
-		// glNormal3f(md.obj_points[md.normalIndices[i].vtx[0]-1].x,md.obj_points[md.normalIndices[i].vtx[0]-1].y,md.obj_points[md.normalIndices[i].vtx[0]-1].z);
-		// glNormal3f(md.obj_points[md.normalIndices[i].vtx[1]-1].x,md.obj_points[md.normalIndices[i].vtx[1]-1].y,md.obj_points[md.normalIndices[i].vtx[1]-1].z);
-		// glNormal3f(md.obj_points[md.normalIndices[i].vtx[2]-1].x,md.obj_points[md.normalIndices[i].vtx[2]-1].y,md.obj_points[md.normalIndices[i].vtx[2]-1].z);
+		glNormal3f(md.obj_points[md.normalIndices[i].vtx[0]-1].x,md.obj_points[md.normalIndices[i].vtx[0]-1].y,md.obj_points[md.normalIndices[i].vtx[0]-1].z);
+		glNormal3f(md.obj_points[md.normalIndices[i].vtx[1]-1].x,md.obj_points[md.normalIndices[i].vtx[1]-1].y,md.obj_points[md.normalIndices[i].vtx[1]-1].z);
+		glNormal3f(md.obj_points[md.normalIndices[i].vtx[2]-1].x,md.obj_points[md.normalIndices[i].vtx[2]-1].y,md.obj_points[md.normalIndices[i].vtx[2]-1].z);
 	}
 	
 	glEnd();
