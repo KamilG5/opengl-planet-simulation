@@ -11,8 +11,13 @@
 #include "gl/glut.h"   // - An interface and windows management library
 #endif
 model md;
+#define PLANETS 4
+
 static float tx = 0.0;
-static float rotx = 0.0;
+static float ty = 0.0;
+static float tz = 0.0;
+static float planet_rotate = 0.0;
+static float rotx[PLANETS];
 static bool animate = true;
 static float red = 1.0;
 static float green = 0.0;
@@ -63,25 +68,16 @@ void Render()
   glMatrixMode(GL_MODELVIEW); 
   glLoadIdentity();
 
-  //glTranslatef(0,0,-100);
-  //glTranslatef(tx,0.0,0.0);
+  glTranslatef(0, 0, -15);
+  glRotatef(tx, 1, 0, 0);
+  glRotatef(ty, 0, 1, 0);
+  glTranslatef(0, 0, 15);
 
   
  
-  //(01)             
 	DisplayStars();
-  	// glRotatef(rotx,0,1,0);
 	DisplayModel(md);
 	DisplaySun();
-
-  //(02)
-  //glColor3f(0.8, 0.1, 0.1);
-  //glTranslatef(-20.0,0.0,0.0);
-  //keimeno("Dokimastiko keimeno",0.05f);
-
-  //(03)             
-  //glColor3f(red, green, blue);                            // Set drawing colour
-  //glutSolidTeapot(20.0);
   
  
   glutSwapBuffers();             // All drawing commands applied to the 
@@ -107,45 +103,49 @@ void Resize(int w, int h)
 
 void Idle()
 {
-	for (int i = 0; i < STARS_NUM ; i++) {
+	if(animate){
+		for (int i = 0; i < STARS_NUM ; i++) {
 
-		if ((stars_radius[i] < stars_radius_init[i] + STARS_THRESHOLD * stars_radius_init[i]) && star_up) {
-			stars_radius[i] += STARS_STEP;
+			if ((stars_radius[i] < stars_radius_init[i] + STARS_THRESHOLD * stars_radius_init[i]) && star_up) {
+				stars_radius[i] += STARS_STEP;
+			}
+			else if ((stars_radius[i] > stars_radius_init[i]) && !star_up) {
+				stars_radius[i] -= STARS_STEP;
+
+			}
+			else if (stars_radius[i] >= stars_radius_init[i] + STARS_THRESHOLD*stars_radius_init[i] && star_up) {
+				star_up = false;
+				stars_radius[i] -= STARS_STEP;
+
+			}
+			else if (stars_radius[i] <= stars_radius_init[i] && !star_up) {
+				star_up = true;
+				stars_radius[i] += STARS_STEP;
+			}
+
 		}
-		else if ((stars_radius[i] > stars_radius_init[i]) && !star_up) {
-			stars_radius[i] -= STARS_STEP;
 
+		if ( (sun_radius < RADIUS_INIT + RADIUS_THRESHOLD) && up) {
+			sun_radius += RADIUS_STEP;
 		}
-		else if (stars_radius[i] >= stars_radius_init[i] + STARS_THRESHOLD*stars_radius_init[i] && star_up) {
-			star_up = false;
-			stars_radius[i] -= STARS_STEP;
-
+		else if( (sun_radius > RADIUS_INIT ) && !up ) {
+			sun_radius -= RADIUS_STEP;
+			
+		}else if (sun_radius >= RADIUS_INIT + RADIUS_THRESHOLD && up){
+			up = false;
+			sun_radius -= RADIUS_STEP;
+			
 		}
-		else if (stars_radius[i] <= stars_radius_init[i] && !star_up) {
-			star_up = true;
-			stars_radius[i] += STARS_STEP;
+		else if (sun_radius <= RADIUS_INIT && !up) {
+			up = true;
+			sun_radius += RADIUS_STEP;
 		}
 
+		planet_rotate += 6.0;
+		for(int i = 0; i < PLANETS; i++){
+			rotx[i] += 1.2+ 2.0*i;
+		}
 	}
-
-	if ( (sun_radius < RADIUS_INIT + RADIUS_THRESHOLD) && up) {
-		sun_radius += RADIUS_STEP;
-	}
-	else if( (sun_radius > RADIUS_INIT ) && !up ) {
-		sun_radius -= RADIUS_STEP;
-		
-	}else if (sun_radius >= RADIUS_INIT + RADIUS_THRESHOLD && up){
-		up = false;
-		sun_radius -= RADIUS_STEP;
-		
-	}
-	else if (sun_radius <= RADIUS_INIT && !up) {
-		up = true;
-		sun_radius += RADIUS_STEP;
-	}
-
-	if(animate)
-		rotx += 3.4;
 
 	glutPostRedisplay();
 }
@@ -158,13 +158,18 @@ void Keyboard(unsigned char key,int x,int y)
 	{
 	case 'q' : exit(0);
 		break;
-	case 'a' : tx-=0.5f;
+	case 'a' : ty-=0.5f;
+			   // tz+=0.5f;
 		break;
-	case 'd' : tx+=0.5f;
+	case 'd' : ty+=0.5f;
+			   // tz-=0.5f;
+		break;
+	case 'w' : tx-=0.5f;
+		break;
+	case 's' : tx+=0.5f;
 		break;
 	default : break;
 	}
-
 	glutPostRedisplay();
 
 }
@@ -181,12 +186,17 @@ void Mouse(int button,int state,int x,int y)
 
 void Setup()  // TOUCH IT !! 
 { 
+	for(int i = 0; i < PLANETS; i++){
+		rotx[i] = 0.0;
+	}
+
+
 	for (int i = 0; i < STARS_NUM; i++) {
 		stars_radius[i] = stars_radius_init[i] = rand() / (((double)RAND_MAX*20.0)) + 0.01;
 
 		stars_positions[i][0] = (rand() % 10000) / 600.0;
 		stars_positions[i][1] = (rand() % 10000) / 600.0;
-		stars_positions[i][2] = (rand() % 100);
+		stars_positions[i][2] = (rand() % 50);
 
 		if((rand() % 2) == 0) 
 			stars_positions[i][2] *= -1;
@@ -300,7 +310,7 @@ void Setup()  // TOUCH IT !!
 
 void DisplaySun() {
 	glPushMatrix();
-		glTranslatef(0, 0, -10);
+		glTranslatef(0, 0, -15);
 
 		glColor3f(1, 0.91, 0.0);							   // Sun
 		glutSolidSphere(RADIUS_INIT, 200, 20);
@@ -420,32 +430,48 @@ void ReadFile(model *md)
 
 void DisplayModel(model md){
 
-	// glColor3f(0.046, 0.897, 0.247);                            // Set drawing colour
-	// displayPlanet(md, 10, 200, -700, 0.15);
+	glColor3f(0.046, 0.897, 0.247);                            // Set drawing colour
+	displayPlanet(md, 0, 0, 0, 0.0015, 0);
 
-	// glColor3f(0.945, 0.081, 0.12);                            // Set drawing colour
-	// displayPlanet(md, 10, -200, -750, 0.20);
+	glColor3f(0.945, 0.081, 0.12);                            // Set drawing colour
+	displayPlanet(md, 0, 0, 0, 0.0020, 1);
 
-	// glColor3f(0.53, 0.27, 0.94);                            // Set drawing colour
-	// displayPlanet(md, -250, -40, -680, 0.18);
+	glColor3f(0.53, 0.27, 0.94);                            // Set drawing colour
+	displayPlanet(md, 0, 0, 0, 0.0018, 2);
 
 	glColor3f(0.3, 0.2, 0.9);                            // Set drawing colour
-	displayPlanet(md, 0, 0, -13, 0.0005);
+	displayPlanet(md, 0, 0, 0, 0.0014, 3);
 
 
 	
 	
 }
 
-void displayPlanet(model md, double x, double y, double z, float size){
+void displayPlanet(model md, double x, double y, double z, float size, int planet_no){
 	glPushMatrix();
 	glTranslatef(x,y,z);
-		glTranslatef(0, 0, -5); 
-		glRotatef(rotx, 0, 1, 0);
-		glTranslatef(0, 0, 10);
+		if(planet_no % 4 == 0){
+			glTranslatef(0, 0, -15); 
+			glRotatef(rotx[planet_no], 0, 1, 0);
+			glTranslatef(0, 0, 9);
+		} else if(planet_no % 4 == 3) {
+			glTranslatef(0, 0, -20); 
+			glRotatef(rotx[planet_no], 1, 1, 0);
+			glTranslatef(0, 0, 14);
+		} else if(planet_no % 4 == 1){
+			glTranslatef(0, 0, -19); 
+			glRotatef(rotx[planet_no], 1, 0, 0);
+			glTranslatef(0, 0, 13);
+		} else if(planet_no % 4 == 2){
+			glTranslatef(0, 0, -15); 
+			glRotatef(rotx[planet_no], -1, 1, 0);
+			glTranslatef(0, 0, 9);
+		}
 
-  	// glRotatef(rotx,0,1,0);
 	glScalef(size, size, size);
+	glRotatef(planet_rotate, 1, 0, 0);
+	// glRotatef(planet_rotate, 0, 1, 0);
+	// glRotatef(planet_rotate, 0, 0, 1);
 	glTranslatef(-x,-y,-z);
 	glBegin(GL_TRIANGLES);
 
