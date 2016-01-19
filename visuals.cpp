@@ -35,8 +35,8 @@ static double sun_radius = RADIUS_INIT;
 
 #define STARS_NUM 100
 #define STARS_INIT 1.5
-#define STARS_THRESHOLD 2
-#define STARS_STEP 0.005
+#define STARS_THRESHOLD 0.02
+#define STARS_STEP 0.003
 
 
 
@@ -106,14 +106,14 @@ void Idle()
 	if(animate){
 		for (int i = 0; i < STARS_NUM ; i++) {
 
-			if ((stars_radius[i] < stars_radius_init[i] + STARS_THRESHOLD * stars_radius_init[i]) && star_up) {
+			if ((stars_radius[i] < stars_radius_init[i] + STARS_THRESHOLD) && star_up) {
 				stars_radius[i] += STARS_STEP;
 			}
 			else if ((stars_radius[i] > stars_radius_init[i]) && !star_up) {
 				stars_radius[i] -= STARS_STEP;
 
 			}
-			else if (stars_radius[i] >= stars_radius_init[i] + STARS_THRESHOLD*stars_radius_init[i] && star_up) {
+			else if (stars_radius[i] >= stars_radius_init[i] + STARS_THRESHOLD && star_up) {
 				star_up = false;
 				stars_radius[i] -= STARS_STEP;
 
@@ -192,13 +192,13 @@ void Setup()  // TOUCH IT !!
 
 
 	for (int i = 0; i < STARS_NUM; i++) {
-		stars_radius[i] = stars_radius_init[i] = rand() / (((double)RAND_MAX*20.0)) + 0.01;
+		stars_radius[i] = stars_radius_init[i] = rand() / (((double)RAND_MAX*30.0)) + 0.01;
 
 		stars_positions[i][0] = (rand() % 10000) / 600.0;
 		stars_positions[i][1] = (rand() % 10000) / 600.0;
 		stars_positions[i][2] = (rand() % 50);
 
-		if((rand() % 2) == 0) 
+		if(rand()%2==0) 
 			stars_positions[i][2] *= -1;
 
 
@@ -264,7 +264,7 @@ void Setup()  // TOUCH IT !!
 	glColorMaterial( GL_FRONT, GL_AMBIENT_AND_DIFFUSE );
   
 	//Set up light source
-	GLfloat light_position[] = { 0.0, 0.0, 30.0, 0.0 };
+	GLfloat light_position[] = { 0.0, 0.0, 15.0, 0.0 };
 	glLightfv( GL_LIGHT0, GL_POSITION, light_position);
 
 	GLfloat ambientLight[] = { 0.3, 0.3, 0.3, 1.0 };
@@ -333,6 +333,7 @@ void DisplayStars() {
 			glutSolidSphere(stars_radius_init[i], 200, 20);
 
 			double opacity = (stars_radius_init[i] + STARS_THRESHOLD - stars_radius[i]) / STARS_THRESHOLD;
+			// printf("op: %lf, stars_radius_init[i]:%lf, stars_radius[i]: %lf, STARS_THRESHOLD: %lf   \n",opacity, stars_radius_init[i], stars_radius[i], STARS_THRESHOLD );
 			glColor4f(0.5, 0.5, 0.5, opacity);							   
 			glutSolidSphere(stars_radius[i], 200, 20);
 
