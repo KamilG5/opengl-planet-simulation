@@ -214,7 +214,6 @@ void Setup()  // TOUCH IT !!
 		}
 
 
-		//cout <<i <<"radius: "<< stars_radius[i] <<" x: " << stars_positions[i][0] << " y: " << stars_positions[i][1] << endl;
 
 	}
 	ReadFile(&md);
@@ -224,22 +223,7 @@ void Setup()  // TOUCH IT !!
 	// polygon rendering mode
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-	//
-	////Set up light source
-	//GLfloat light_position[] = { 0, 0.0, 0.0, 1.0 };
-	//GLfloat ambientLight[] = { 0.2, 0.2, 0.2, 1.0 };
-	//GLfloat diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
-	//
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	//glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	//
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
-	//
-	//glEnable(GL_POINT_SMOOTH);
 
-	// Black background
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 
@@ -279,32 +263,8 @@ void Setup()  // TOUCH IT !!
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
-	//GLfloat light_position1[] = { 0.0, 0.0, 1.0, 0.0 };
-	//glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
-	//
-	//GLfloat ambientLight1[] = { 0.3, 0.3, 0.3, 1.0 };
-	//GLfloat diffuseLight1[] = { 0.8, 0.8, 0.8, 1.0 };
-	//GLfloat specularLight1[] = { 1.0, 1.0, 1.0, 1.0 };
-	//
-	//
-	//glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight1);
-	//glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight1);
-	//
-	//
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT1);
-	//
-	// glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-	
-	//glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 
-	//01
- 	//glFrontFace(GL_CCW);
- 
-
-	// Black background
-	//glClearColor(0.0f,0.0f,0.0f,1.0f);
 
 }
 
@@ -323,8 +283,6 @@ void DisplaySun() {
 }
 
 void DisplayStars() {
-	//double star_radius = (rand() / (((double)RAND_MAX)*10.0));
-	//double star_radius =0.5;
 	for (int i = 0; i < STARS_NUM; i++) {
 		glPushMatrix();
 			glTranslatef(stars_positions[i][0], stars_positions[i][1], stars_positions[i][2]);
@@ -338,21 +296,6 @@ void DisplayStars() {
 			glutSolidSphere(stars_radius[i], 200, 20);
 
 		glPopMatrix();
-
-// glPushMatrix();
-// 		glTranslatef(0, 0, -10);
-// 		glColor3f(1, 0.91, 0.0);							   // Sun
-// 		glutSolidSphere(RADIUS_INIT, 200, 20);
-// 	glPopMatrix();
-
-// 	glPushMatrix();
-// 		glTranslatef(0, 0, -11);
-// 		double opacity = (RADIUS_INIT + RADIUS_THRESHOLD - sun_radius) / RADIUS_THRESHOLD + 0.35;
-// 		glColor4f(0.3, 0.33, 0.0, opacity);							   // Radiation
-// 		glutSolidSphere(sun_radius, 200, 20);
-// 	glPopMatrix();
-	
-
 	}
 
 	
@@ -471,8 +414,6 @@ void displayPlanet(model md, double x, double y, double z, float size, int plane
 
 	glScalef(size, size, size);
 	glRotatef(planet_rotate, 1, 0, 0);
-	// glRotatef(planet_rotate, 0, 1, 0);
-	// glRotatef(planet_rotate, 0, 0, 1);
 	glTranslatef(-x,-y,-z);
 	glBegin(GL_TRIANGLES);
 

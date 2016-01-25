@@ -1,14 +1,3 @@
-//--------------------------------------------------//
-//													//	
-//    Learning OpenGL: Εισαγωγικά Μαθήματα OpenGL   //
-//													//
-//    Πλατφόρμα ανάπτυξης παραδειγμάτων				//
-//													//
-//													//
-//		Μάθημα 5ο									//
-//--------------------------------------------------//
-
-
 #include <stdio.h>     // - Just for some ASCII messages
 #include "visuals.h"   // Header file for our OpenGL functions
 #ifdef __linux__ 
@@ -19,10 +8,6 @@
 #include <time.h>
 
 
-////////////////// State Variables ////////////////////////
-
-
-/////////////// Main Program ///////////////////////////
 
 int main(int argc, char* argv[])
 { 
@@ -59,17 +44,7 @@ int main(int argc, char* argv[])
   glutIdleFunc(Idle);
   glutKeyboardFunc(Keyboard);
   glutMouseFunc(Mouse);
-
-//  glutCreateMenu(MenuSelect);
- // glutAddMenuEntry("Red",RED);
-  //glutAddMenuEntry("Blue",BLUE);
-  //glutAddMenuEntry("Green",GREEN);
-  //glutAddMenuEntry("White",WHITE);
-	
-  // attach the menu to the right button
-//  glutAttachMenu(GLUT_RIGHT_BUTTON);
-
- 
+  
   //Enter main event handling loop
   glutMainLoop();
   return 0;	
